@@ -16,6 +16,25 @@ let pic = fs.readFileSync("./url.txt").toString().split("\n")
 
 let global = ""
 
+let picpath = path.join(__dirname,'pic','pic')
+
+
+if(!fs.statSync(path.join(__dirname,'pic'))){
+    fs.mkdir(path.join(__dirname,'pic'),_=>{
+        if(!fs.statSync(path.join(__dirname,'pic','pic'))){
+            fs.mkdir(path.join(__dirname,'pic','pic'),err=>{
+                if (err != null){
+                    console.error(err)
+                    
+                }else{
+                   
+                }
+            })
+        }
+    })
+}
+
+
 const httpsAgent = new SocksProxyAgent.SocksProxyAgent('socks5://127.0.0.1:7890')
 function MyAxios(url){
     return new Promise((resolve,reject)=>{
@@ -31,17 +50,13 @@ function MyAxios(url){
 }
 
 async function downloadFile(url){
-    await download(url,"./pic")
+    await download(url,path.join(__dirname,'pic','pic'))
     let temp = url.split("/")
     let temp2 = url.split(".")[url.split(".").length - 1]
-    console.log(`./pic/${temp[temp.length - 1]}`)
     temp2 = temp2.substr(0,temp2.length - 1)
     temp[temp.length - 1] = temp[temp.length - 1].substr(0,temp[temp.length - 1].length - 1)
-    if(fs.stat(`./pic/1.${temp2}`,err=>{
-
-    }))
-    fs.unlink(`./pic/1.${temp2}`)
-    fs.rename(`./pic/${temp[temp.length - 1]}`,`./pic/1.${temp2}`,err=>{
+    fs.unlink(`${picpath}/1.${temp2}`,_=>{})
+    fs.rename(`${picpath}/${temp[temp.length - 1]}`,`${picpath}/1.${temp2}`,err=>{
     })
     return `https://qrobot.dadiqq.cn/pic/1.${temp2}`
 }
@@ -50,9 +65,9 @@ setInterval(()=>{
     global = ""
 },5000)
 
-picRouter.get("/",async (ctx,next)=>{
-    //请求美女网站，下载图片到本地供引用消息进行访问。
-    //直接随机取出一个下载到本地，然后返回地址给go，告诉成功，发送引用消息
+app.use(picRouter.routes())
+app.use(staticFIles(path.join(__dirname,'pic')))
+app.use(async (ctx,next)=>{
     let r_list = Math.floor(Math.random() * pic.length)
     if(global == ""){
         let res = await downloadFile(pic[r_list])
@@ -60,10 +75,5 @@ picRouter.get("/",async (ctx,next)=>{
         //5s更新一次
     }
     ctx.body = global
-})
-app.use(picRouter.routes())
-app.use(staticFIles('./'))
-app.use((ctx,next)=>{
-    ctx.body = "hello world"
 })
 app.listen(9000)
