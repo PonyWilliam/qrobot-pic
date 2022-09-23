@@ -53,8 +53,8 @@ async function downloadFile(url){
     await download(url,path.join(__dirname,'pic','pic'))
     let temp = url.split("/")
     let temp2 = url.split(".")[url.split(".").length - 1]
-    temp2 = temp2.substr(0,temp2.length - 1)
-    temp[temp.length - 1] = temp[temp.length - 1].substr(0,temp[temp.length - 1].length - 1)
+    temp2 = temp2.replace("\r","")
+    temp[temp.length - 1] = temp[temp.length - 1].replace("\r","")
     fs.unlink(`${picpath}/1.${temp2}`,_=>{})
     fs.rename(`${picpath}/${temp[temp.length - 1]}`,`${picpath}/1.${temp2}`,err=>{
     })
