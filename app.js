@@ -76,5 +76,5 @@ app.use(async (ctx,next)=>{
     }
     ctx.body = global
 })
-app.listen(80)
+app.listen(9000)
 module.exports = app
