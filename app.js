@@ -16,23 +16,19 @@ let pic = fs.readFileSync("./url.txt").toString().split("\n")
 
 let global = ""
 
-let picpath = path.join(__dirname,'pic','pic')
+let picpath = '/mnt/pic/pic'
 
 
-if(!fs.statSync(path.join(__dirname,'pic'))){
-    fs.mkdir(path.join(__dirname,'pic'),_=>{
-        if(!fs.statSync(path.join(__dirname,'pic','pic'))){
-            fs.mkdir(path.join(__dirname,'pic','pic'),err=>{
-                if (err != null){
-                    console.error(err)
-                    
-                }else{
-                   
-                }
-            })
-        }
-    })
-}
+// if(!fs.statSync(path.join(__dirname,'pic'))){
+//     fs.mkdirSync(path.join(__dirname,'pic'))
+//     if(!fs.statSync(path.join(__dirname,'pic','pic'))){
+//         fs.mkdirSync(path.join(__dirname,'pic','pic'))
+//     }
+// }
+//修改目录权限
+// fs.chmodSync(path.join(__dirname,'pic','pic'),777)
+// fs.chmodSync(path.join(__dirname,'pic'),777)
+
 
 
 const httpsAgent = new SocksProxyAgent.SocksProxyAgent('socks5://127.0.0.1:7890')
@@ -50,7 +46,7 @@ function MyAxios(url){
 }
 
 async function downloadFile(url){
-    await download(url,path.join(__dirname,'pic','pic'))
+    await download(url,picpath)
     let temp = url.split("/")
     let temp2 = url.split(".")[url.split(".").length - 1]
     temp2 = temp2.replace("\r","")
@@ -66,7 +62,7 @@ setInterval(()=>{
 },5000)
 
 app.use(picRouter.routes())
-app.use(staticFIles(path.join(__dirname,'pic')))
+app.use(staticFIles('/mnt/pic'))
 app.use(async (ctx,next)=>{
     let r_list = Math.floor(Math.random() * pic.length)
     if(global == ""){
